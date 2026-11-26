@@ -82,5 +82,57 @@
 			"\t$0",
 			"}"
 		]
+	},
+	"class": {
+		"prefix": ["class"],
+		"body": [
+			"class ${1:Name} {",
+			"\tscore ${2:field} = ${3:0}",
+			"",
+			"\tmethod ${4:name} {",
+			"\t\t$0",
+			"\t}",
+			"}"
+		]
+	},
+	"class-extends": {
+		"prefix": ["class extends"],
+		"body": ["class ${1:Name} extends ${2:Parent} {", "\t$0", "}"]
+	},
+	"abstract-class": {
+		"prefix": ["abstract class"],
+		"body": ["abstract class ${1:Name} {", "\tabstract method ${2:name}", "\t$0", "}"]
+	},
+	"method": {
+		"prefix": ["method"],
+		"body": ["method ${1:name} ${2:(${3:param})} {", "\t$0", "}"]
+	},
+	"override-method": {
+		"prefix": ["override method"],
+		"body": ["override method ${1:name} {", "\t$0", "}"]
+	},
+	"constructor": {
+		"prefix": ["constructor"],
+		"body": ["constructor ${1:(${2:param})} {", "\t$0", "}"]
+	},
+	"destructor": {
+		"prefix": ["destructor"],
+		"body": ["destructor {", "\t$0", "}"]
+	},
+	"new": {
+		"prefix": ["new"],
+		"body": ["new ${1:Class} ${2:{${3:key}:${4:value}\\}}"]
+	},
+	"new-block": {
+		"prefix": ["new block"],
+		"body": ["new ${1:Class} {", "\t$0", "}"]
+	},
+	"invoke": {
+		"prefix": ["invoke"],
+		"body": ["invoke ${1:Class}.${2:method} on ${3:@e[class=$1]}"]
+	},
+	"attach": {
+		"prefix": ["attach"],
+		"body": ["attach ${1:Class} to ${2:@e[type=${3:zombie}]}"]
 	}
 }

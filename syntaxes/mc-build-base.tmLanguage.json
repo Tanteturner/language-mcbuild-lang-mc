@@ -29,6 +29,12 @@
 					"include": "#clock_definition"
 				},
 				{
+					"include": "#class_definition_empty"
+				},
+				{
+					"include": "#class_definition"
+				},
+				{
 					"include": "#function_definition"
 				},
 
@@ -61,6 +67,18 @@
 				},
 				{
 					"include": "#multiline_js"
+				},
+				{
+					"include": "#invoke_statement"
+				},
+				{
+					"include": "#attach_statement"
+				},
+				{
+					"include": "#new_block"
+				},
+				{
+					"include": "#new_statement"
 				},
 				{
 					"include": "#special_function_call"
@@ -705,6 +723,386 @@
 				},
 				"7": {
 					"name": "constant.numeric"
+				}
+			}
+		},
+
+		"class_definition_empty": {
+			"name": "meta.class_definition.mcb",
+			"match": "^[ \\t]*(?:(abstract)\\s+)?(class)\\s+([A-Za-z][A-Za-z0-9_]*)(?:\\s+(extends)\\s+((?:[a-z0-9_.\\-]+:(?:[a-z0-9_.\\-]+/)*)?[A-Za-z][A-Za-z0-9_]*))?\\s*\\{\\s*\\}\\s*$",
+			"captures": {
+				"1": {
+					"name": "storage.modifier.abstract.mcb"
+				},
+				"2": {
+					"name": "keyword.control.class.mcb"
+				},
+				"3": {
+					"name": "entity.name.type.class.mcb"
+				},
+				"4": {
+					"name": "keyword.control.extends.mcb"
+				},
+				"5": {
+					"name": "entity.name.type.class.mcb"
+				}
+			}
+		},
+		"class_definition": {
+			"name": "meta.class_definition.mcb",
+			"begin": "^[ \\t]*(?:(abstract)\\s+)?(class)\\s+([A-Za-z][A-Za-z0-9_]*)(?:\\s+(extends)\\s+((?:[a-z0-9_.\\-]+:(?:[a-z0-9_.\\-]+/)*)?[A-Za-z][A-Za-z0-9_]*))?\\s*\\{\\s*$",
+			"beginCaptures": {
+				"1": {
+					"name": "storage.modifier.abstract.mcb"
+				},
+				"2": {
+					"name": "keyword.control.class.mcb"
+				},
+				"3": {
+					"name": "entity.name.type.class.mcb"
+				},
+				"4": {
+					"name": "keyword.control.extends.mcb"
+				},
+				"5": {
+					"name": "entity.name.type.class.mcb"
+				}
+			},
+			"end": "^[ \\t]*}$",
+			"patterns": [
+				{
+					"include": "#class_context"
+				}
+			]
+		},
+		"class_context": {
+			"patterns": [
+				{
+					"include": "#block_comment"
+				},
+				{
+					"include": "#comment"
+				},
+				{
+					"include": "#class_entity"
+				},
+				{
+					"include": "#class_field"
+				},
+				{
+					"include": "#class_abstract_method"
+				},
+				{
+					"include": "#class_member_empty"
+				},
+				{
+					"include": "#class_member"
+				},
+				{
+					"match": "\\S.*",
+					"name": "invalid.illegal.class_member.mcb"
+				}
+			]
+		},
+		"class_entity": {
+			"match": "^[ \\t]*(entity)\\s+((?:[a-z0-9_.\\-]+:)?[a-z0-9_./\\-]+)(?:\\s+(\\{.*\\}))?\\s*$",
+			"captures": {
+				"1": {
+					"name": "storage.type.entity.mcb"
+				},
+				"2": {
+					"name": "entity.name.type.entity.mcb"
+				},
+				"3": {
+					"patterns": [
+						{
+							"include": "source.injected-mcfunction"
+						}
+					]
+				}
+			}
+		},
+		"class_field": {
+			"match": "^[ \\t]*(?:(static)\\s+)?(score|data)\\s+([a-z0-9_]+)(?:\\s*(=)\\s*(.+?))?\\s*$",
+			"captures": {
+				"1": {
+					"name": "storage.modifier.static.mcb"
+				},
+				"2": {
+					"name": "storage.type.field.mcb"
+				},
+				"3": {
+					"name": "variable.other.property.mcb"
+				},
+				"4": {
+					"name": "keyword.operator.assignment.mcb"
+				},
+				"5": {
+					"patterns": [
+						{
+							"include": "source.injected-mcfunction"
+						}
+					]
+				}
+			}
+		},
+		"class_abstract_method": {
+			"match": "^[ \\t]*(abstract)\\s+(method)\\s+([a-z0-9_]+)\\s*(\\(.*\\))?\\s*$",
+			"captures": {
+				"1": {
+					"name": "storage.modifier.abstract.mcb"
+				},
+				"2": {
+					"name": "keyword.control.method.mcb"
+				},
+				"3": {
+					"name": "entity.name.function.method.mcb"
+				},
+				"4": {
+					"patterns": [
+						{
+							"include": "#class_params"
+						}
+					]
+				}
+			}
+		},
+		"class_member_empty": {
+			"match": "^[ \\t]*(?:((?:(?:static|override)\\s+)*)(method)\\s+([a-z0-9_]+)|(constructor|destructor|tick|load))\\s*(\\(.*?\\))?\\s*\\{\\s*\\}\\s*$",
+			"captures": {
+				"1": {
+					"name": "storage.modifier.mcb"
+				},
+				"2": {
+					"name": "keyword.control.method.mcb"
+				},
+				"3": {
+					"name": "entity.name.function.method.mcb"
+				},
+				"4": {
+					"name": "keyword.control.function"
+				},
+				"5": {
+					"patterns": [
+						{
+							"include": "#class_params"
+						}
+					]
+				}
+			}
+		},
+		"class_member": {
+			"name": "meta.class_member.mcb",
+			"begin": "^[ \\t]*(?:((?:(?:static|override)\\s+)*)(method)\\s+([a-z0-9_]+)|(constructor|destructor|tick|load))\\s*(\\(.*?\\))?\\s*\\{\\s*$",
+			"beginCaptures": {
+				"1": {
+					"name": "storage.modifier.mcb"
+				},
+				"2": {
+					"name": "keyword.control.method.mcb"
+				},
+				"3": {
+					"name": "entity.name.function.method.mcb"
+				},
+				"4": {
+					"name": "keyword.control.function"
+				},
+				"5": {
+					"patterns": [
+						{
+							"include": "#class_params"
+						}
+					]
+				}
+			},
+			"end": "^[ \\t]*}$",
+			"patterns": [
+				{
+					"include": "#function_context"
+				}
+			]
+		},
+		"class_params": {
+			"patterns": [
+				{
+					"match": "[()]",
+					"name": "punctuation.definition.parameters.mcb"
+				},
+				{
+					"match": "(?<=[(,])\\s*([a-z0-9_]+)",
+					"captures": {
+						"1": {
+							"name": "variable.parameter.mcb"
+						}
+					}
+				},
+				{
+					"match": ",",
+					"name": "punctuation.separator.parameter.mcb"
+				},
+				{
+					"match": "=",
+					"name": "keyword.operator.assignment.mcb"
+				},
+				{
+					"include": "source.injected-mcfunction"
+				}
+			]
+		},
+		"invoke_statement": {
+			"name": "meta.invoke.mcb",
+			"match": "(?:^[ \\t]*|(?<=\\brun ))(\\$?)(invoke)\\s+(?:(this|super)|((?:[a-z0-9_.\\-]+:(?:[a-z0-9_.\\-]+/)*)?[A-Za-z][A-Za-z0-9_]*))(\\.)([a-z0-9_]+)(?:\\s+(on)(?=\\s))?(.*)$",
+			"captures": {
+				"1": {
+					"name": "markup.italic"
+				},
+				"2": {
+					"name": "keyword.control.invoke.mcb"
+				},
+				"3": {
+					"name": "variable.language.this.mcb"
+				},
+				"4": {
+					"name": "entity.name.type.class.mcb"
+				},
+				"5": {
+					"name": "punctuation.accessor.mcb"
+				},
+				"6": {
+					"name": "entity.name.function.method.mcb"
+				},
+				"7": {
+					"name": "keyword.control.oop.mcb"
+				},
+				"8": {
+					"patterns": [
+						{
+							"match": "\\b(with)\\b",
+							"captures": {
+								"1": {
+									"name": "keyword.control.oop.mcb"
+								}
+							}
+						},
+						{
+							"include": "source.injected-mcfunction"
+						}
+					]
+				}
+			}
+		},
+		"attach_statement": {
+			"name": "meta.attach.mcb",
+			"match": "(?:^[ \\t]*|(?<=\\brun ))(\\$?)(attach)\\s+((?:[a-z0-9_.\\-]+:(?:[a-z0-9_.\\-]+/)*)?[A-Za-z][A-Za-z0-9_]*)\\s+(to)(?=\\s)(.*)$",
+			"captures": {
+				"1": {
+					"name": "markup.italic"
+				},
+				"2": {
+					"name": "keyword.control.attach.mcb"
+				},
+				"3": {
+					"name": "entity.name.type.class.mcb"
+				},
+				"4": {
+					"name": "keyword.control.oop.mcb"
+				},
+				"5": {
+					"patterns": [
+						{
+							"match": "\\b(with)\\b",
+							"captures": {
+								"1": {
+									"name": "keyword.control.oop.mcb"
+								}
+							}
+						},
+						{
+							"include": "source.injected-mcfunction"
+						}
+					]
+				}
+			}
+		},
+		"new_block": {
+			"name": "meta.new_block.mcb",
+			"begin": "(?:^[ \\t]*|(?<=\\brun ))(\\$?)(new)\\s+((?:[a-z0-9_.\\-]+:(?:[a-z0-9_.\\-]+/)*)?[A-Za-z][A-Za-z0-9_]*)(.*?)\\s*\\{\\s*$",
+			"beginCaptures": {
+				"1": {
+					"name": "markup.italic"
+				},
+				"2": {
+					"name": "keyword.control.new.mcb"
+				},
+				"3": {
+					"name": "entity.name.type.class.mcb"
+				},
+				"4": {
+					"patterns": [
+						{
+							"match": "^\\s*(on|to)\\b",
+							"captures": {
+								"1": {
+									"name": "keyword.control.oop.mcb"
+								}
+							}
+						},
+						{
+							"match": "\\b(with)\\b",
+							"captures": {
+								"1": {
+									"name": "keyword.control.oop.mcb"
+								}
+							}
+						},
+						{
+							"include": "source.injected-mcfunction"
+						}
+					]
+				}
+			},
+			"end": "^[ \\t]*}$",
+			"patterns": [
+				{
+					"include": "#function_context"
+				}
+			]
+		},
+		"new_statement": {
+			"name": "meta.new.mcb",
+			"match": "(?:^[ \\t]*|(?<=\\brun ))(\\$?)(new)\\s+((?:[a-z0-9_.\\-]+:(?:[a-z0-9_.\\-]+/)*)?[A-Za-z][A-Za-z0-9_]*)(.*)$",
+			"captures": {
+				"1": {
+					"name": "markup.italic"
+				},
+				"2": {
+					"name": "keyword.control.new.mcb"
+				},
+				"3": {
+					"name": "entity.name.type.class.mcb"
+				},
+				"4": {
+					"patterns": [
+						{
+							"match": "^\\s*(on|to)\\b",
+							"captures": {
+								"1": {
+									"name": "keyword.control.oop.mcb"
+								}
+							}
+						},
+						{
+							"match": "\\b(with)\\b",
+							"captures": {
+								"1": {
+									"name": "keyword.control.oop.mcb"
+								}
+							}
+						},
+						{
+							"include": "source.injected-mcfunction"
+						}
+					]
 				}
 			}
 		}

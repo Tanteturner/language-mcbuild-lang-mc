@@ -14,6 +14,9 @@
 					"include": "#inline-js"
 				},
 				{
+					"include": "#mcb-oop-field"
+				},
+				{
 					"include": "#literals"
 				},
 				{
@@ -294,6 +297,9 @@
 		},
 		"literals_string-double": {
 			"patterns": [
+				{
+					"include": "#mcb-oop-class-arg"
+				},
 				{
 					"captures": {
 						"0": {
@@ -610,6 +616,9 @@
 							"include": "#inline-js"
 						},
 						{
+							"include": "#mcb-oop-class-arg"
+						},
+						{
 							"include": "#resource-name"
 						},
 						{
@@ -776,6 +785,58 @@
 					"name": "meta.inline-js"
 				}
 			]
+		},
+		"mcb-oop-field": {
+			"patterns": [
+				{
+					"match": "(?<![A-Za-z0-9_:./#$@~^\\\\-])(this)(\\.)([a-z0-9_]+)",
+					"captures": {
+						"1": {
+							"name": "variable.language.this.mcb"
+						},
+						"2": {
+							"name": "punctuation.accessor.mcb"
+						},
+						"3": {
+							"name": "variable.other.property.mcb"
+						}
+					},
+					"name": "meta.mcb-oop-field"
+				},
+				{
+					"match": "(?<![A-Za-z0-9_:./#$@~^\\\\-])([A-Z][A-Za-z0-9_]*)(\\.)([a-z0-9_]+)\\b",
+					"captures": {
+						"1": {
+							"name": "entity.name.type.class.mcb"
+						},
+						"2": {
+							"name": "punctuation.accessor.mcb"
+						},
+						"3": {
+							"name": "variable.other.property.static.mcb"
+						}
+					},
+					"name": "meta.mcb-oop-field"
+				}
+			]
+		},
+		"mcb-oop-class-arg": {
+			"match": "\\b(class)(=)(!?)((?:[a-z0-9_.\\-]+:(?:[a-z0-9_.\\-]+/)*)?[A-Za-z][A-Za-z0-9_]*)",
+			"captures": {
+				"1": {
+					"name": "variable.other.mcfunction"
+				},
+				"2": {
+					"name": "keyword.operator.mcfunction"
+				},
+				"3": {
+					"name": "keyword.operator.mcfunction"
+				},
+				"4": {
+					"name": "entity.name.type.class.mcb"
+				}
+			},
+			"name": "meta.mcb-oop-class-arg"
 		}
 	}
 }

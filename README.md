@@ -4,7 +4,7 @@ Tools for writing MC-Build (`.mcb` and `.mcbt`) files.
 
 ## Features
 
--   Syntax highlighting
+-   Syntax highlighting, including classes (`class`, `new`, `invoke`, `attach`, `this.<field>`)
 -   Snippets for common tasks
 -   **Format Document** support
 

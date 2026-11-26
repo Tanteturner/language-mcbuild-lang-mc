@@ -51,14 +51,74 @@ function inject_lang_mc_syntax(json) {
 	json.repository['names'].patterns[4].match = '[A-Za-z_]+(?=\\W)'
 }
 
+// MCB classes: `this.<field>`, `<Class>.<static field>` and `@e[class=<Class>]`.
+// Idempotent, so it can be applied to the checked-in grammar with `--local`.
+function inject_oop_syntax(json) {
+	const CLASS_REF = '(?:[a-z0-9_.\\-]+:(?:[a-z0-9_.\\-]+/)*)?[A-Za-z][A-Za-z0-9_]*'
+	json.repository['mcb-oop-field'] = {
+		patterns: [
+			{
+				// Same word boundary as the compiler: not after `:`, `.`, `/`, `#`, ...
+				match: '(?<![A-Za-z0-9_:./#$@~^\\\\-])(this)(\\.)([a-z0-9_]+)',
+				captures: {
+					1: { name: 'variable.language.this.mcb' },
+					2: { name: 'punctuation.accessor.mcb' },
+					3: { name: 'variable.other.property.mcb' },
+				},
+				name: 'meta.mcb-oop-field',
+			},
+			{
+				// Class names are PascalCase by convention; lowercase ones aren't highlighted.
+				match: '(?<![A-Za-z0-9_:./#$@~^\\\\-])([A-Z][A-Za-z0-9_]*)(\\.)([a-z0-9_]+)\\b',
+				captures: {
+					1: { name: 'entity.name.type.class.mcb' },
+					2: { name: 'punctuation.accessor.mcb' },
+					3: { name: 'variable.other.property.static.mcb' },
+				},
+				name: 'meta.mcb-oop-field',
+			},
+		],
+	}
+	json.repository['mcb-oop-class-arg'] = {
+		match: `\\b(class)(=)(!?)(${CLASS_REF})`,
+		captures: {
+			1: { name: 'variable.other.mcfunction' },
+			2: { name: 'keyword.operator.mcfunction' },
+			3: { name: 'keyword.operator.mcfunction' },
+			4: { name: 'entity.name.type.class.mcb' },
+		},
+		name: 'meta.mcb-oop-class-arg',
+	}
+	const addFirst = (patterns, name, after) => {
+		if (patterns.some(p => p.include === `#${name}`)) return
+		const index = after ? patterns.findIndex(p => p.include === after) + 1 : 0
+		patterns.splice(index, 0, { include: `#${name}` })
+	}
+	// Before `#names`, which would otherwise take `this.hp` as one unquoted word.
+	addFirst(json.repository['root'].patterns, 'mcb-oop-field', '#inline-js')
+	// Selector arguments: `[class=Enemy]`, before the generic key/value patterns.
+	addFirst(json.repository['property'].patterns[1].patterns, 'mcb-oop-class-arg', '#inline-js')
+	// JSON text selectors: `{"selector":"@e[class=Enemy]"}`.
+	addFirst(json.repository['literals_string-double'].patterns, 'mcb-oop-class-arg')
+}
+
 async function main() {
+	if (process.argv.includes('--local')) {
+		// Only apply the MCB class patterns to the checked-in grammar.
+		const json = JSON.parse(fs.readFileSync(SYNTAX_OUT_PATH, 'utf8'))
+		inject_oop_syntax(json)
+		fs.writeFileSync(SYNTAX_OUT_PATH, JSON.stringify(json, null, '\t') + '\n')
+		return
+	}
+
 	const data = await fetch(MC_LANG_URL)
 	const json = await data.json()
 
-	fs.writeFileSync(SYNTAX_OUT_PATH, JSON.stringify(json, null, '\t'))
+	fs.writeFileSync(SYNTAX_OUT_PATH, JSON.stringify(json, null, '\t') + '\n')
 
 	inject_lang_mc_syntax(json)
-	fs.writeFileSync(SYNTAX_OUT_PATH, JSON.stringify(json, null, '\t'))
+	inject_oop_syntax(json)
+	fs.writeFileSync(SYNTAX_OUT_PATH, JSON.stringify(json, null, '\t') + '\n')
 }
 
 void main()
